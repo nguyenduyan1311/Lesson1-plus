@@ -1,17 +1,19 @@
 <form method='post'>
-    <input type="radio" name="shape" value="rectangle" checked />Rectangle<br />
-    <input type="radio" name="shape" value="triangle" />Triangle<br />
+    <h2>Menu</h2>
+    <input type="radio" name="shape" value="rectangle">Print the rectangle<br>
+    <input type="radio" name="shape" value="square-triangle">Print the square triangle
     <select name='rectangular'>
-        <option value="top-left">top-left</option>
-        <option value="top-right">top-right</option>
-        <option value="bottom-right">bottom-right</option>
-        <option value="bottom-left">bottom-left</option>
-    </select><br />
-    <input type='submit' value='Draw' />
+        <option value="top-left">Top-left</option>
+        <option value="top-right">Top-right</option>
+        <option value="bottom-right">Bottom-right</option>
+        <option value="bottom-left">Bottom-left</option>
+    </select><br>
+    <input type="radio" name="shape" value="isosceles-triangle">Print the isosceles triangle<br>
+    <input type="radio" name="shape" value="exit">Exit<br>
+    <button>Search</button>
 </form>
 <?php
-function drawRectangle()
-{
+function drawRectangle(){
     $text = "";
     for ($row = 0; $row < 3; $row++) {
         $text .= "<tr>";
@@ -22,62 +24,67 @@ function drawRectangle()
     }
     return $text;
 }
-function drawTriangle($rectangular)
-{
+function drawSquareTriangle($rectangular){
     $text = "";
-
     switch ($rectangular) {
         case 'bottom-left';
-            for ($row = 1; $row <= 5; $row++) {
+            for ($i= 1; $i <= 5; $i++) {
                 $text .= "<tr>";
-                for ($col = 1; $col <= $row; $col++) {
+                for ($j = 1; $j <= $i; $j++) {
                     $text .= "<td>*</td>";
                 };
                 $text .= "</tr>";
             };
             break;
         case 'top-left':
-            for ($row = 5; $row >= 1; $row--) {
+            for ($i= 5; $i >= 1; $i--) {
                 $text .= "<tr>";
-                for ($col = 0; $col < $row; $col++) {
+                for ($j = 1; $j <= $i; $j++) {
                     $text .= "<td>*</td>";
                 };
                 $text .= "</tr>";
             }
             break;
         case 'top-right':
-            $i = 1;
-            for ($row = 0; $row < 5; $row++) {
-                $text .= "<tr>";
-                for ($col = 0; $col < $i; $col++) {
-                    if ($col >= $i) {
-                        $text .= "<td>*</td>";
+            for ($i = 1; $i <= 5; $i++){
+                for ($j = 1; $j <= 5; $j++){
+                    if ($i <= $j){
+                        $text .= "*";
                     } else {
-                        $text .= "<td></td>";
-                    }
-                };
-                $text .= "</tr>";
-                $i++;
-            };
-            break;
-        case 'bottom-right':
-            $i = 5;
-            for ($row = 0; $row < 5; $row++) {
-                $text .= "<tr>";
-                for ($col = 0; $col < $i; $col++) {
-                    if ($col >= $i) {
-                        $text .= "<td>*</td>";
-                    } else {
-                        $text .= "<td></td>";
+                        $text .= "&nbsp;&nbsp;";
                     }
                 }
-                $text .= "</tr>";
-                $i--;
+                $text .= "</br>";
             }
+            $text .= "</br>";
             break;
-        default:
-    };
-
+        case 'bottom-right':
+            for ($i = 5; $i > 0; $i--) {
+                for ($j = 1; $j < 6; $j++) {
+                    if ($j >= $i) {
+                        $text .= "*";
+                    } else {
+                        $text .= "&nbsp;&nbsp;";
+                    }
+                }
+                $text .= "</br>";
+            }
+            $text .= "</br>";
+            break;
+    }
+    return $text;
+}
+function drawIsoscelesTriangle(){
+    $text = "";
+    for ($i=0; $i<=5; $i++) {
+        for ($j=5; $j>$i; $j--) {
+            $text .= "&nbsp;&nbsp;";
+        }
+        for ($k=0; $k<$i; $k++) {
+            $text .= "*&nbsp&nbsp;";
+        }
+        $text .= "<br>";
+    }
     return $text;
 }
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -88,11 +95,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             case 'rectangle':
                 $text .= drawRectangle();
                 break;
-            case 'triangle':
-                $text .= drawTriangle($rectangular);
+            case 'square-triangle':
+                $text .= drawSquareTriangle($rectangular);
                 break;
-        };
+            case 'isosceles-triangle':
+                $text .= drawIsoscelesTriangle();
+                break;
+            case 'exit':
+                $text .= "Do you want to exit?";
+                break;
+        }
         $text .= '</table>';
-
         echo $text;
 }
